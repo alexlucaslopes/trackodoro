@@ -1,6 +1,6 @@
 let schedules = [
-    { workTime: 1, shortBreakTime: 1, longBreakTime: 1 },
-    { workTime: 1, shortBreakTime: 2, longBreakTime: 2 }
+    { workTime: 60, shortBreakTime: 60, longBreakTime: 60 },
+    { workTime: 20, shortBreakTime: 20, longBreakTime: 20 }
 ];
 let currentScheduleIndex = -1;
 let timer;
@@ -29,13 +29,14 @@ function updateScheduleList() {
         input.id = `schedule${index}`;
         const label = document.createElement("label");
         label.htmlFor = `schedule${index}`;
-        label.textContent = `Schedule ${index + 1}: ${schedule.workTime}m work, ${schedule.shortBreakTime}m short break, ${schedule.longBreakTime}m long break`;
+        label.textContent = `Schedule ${index + 1}: ${formatTime(schedule.workTime)} work, ${formatTime(schedule.shortBreakTime)} short break, ${formatTime(schedule.longBreakTime)} long break`;
         scheduleForm.appendChild(input);
         scheduleForm.appendChild(label);
         scheduleForm.appendChild(document.createElement("br"));
     });
     scheduleForm.addEventListener("change", handleScheduleChange);
 }
+
 
 window.addEventListener("load", updateScheduleList);
 function handleScheduleChange() {
@@ -63,15 +64,15 @@ function selectSchedule(index) {
 
 function startTimer() {
     const schedule = schedules[currentScheduleIndex];
-    let currentTime = remainingTime || schedule.workTime * 60;
+    let currentTime = remainingTime || schedule.workTime;
     timerRunning = true;
     timer = setInterval(() => {
         if (currentTime <= 0) {
             clearInterval(timer);
             if (repetitions % 4 === 0) {
-                currentTime = schedule.longBreakTime * 60;
+                currentTime = schedule.longBreakTime;
             } else {
-                currentTime = schedule.shortBreakTime * 60;
+                currentTime = schedule.shortBreakTime;
             }
             repetitions++;
             document.getElementById("timerDisplay").textContent = formatTime(currentTime);
@@ -91,6 +92,13 @@ function startTimer() {
         }
     }, 1000);
 }
+
+function formatTime(seconds) {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes.toString().padStart(2, "0")}:${remainingSeconds.toString().padStart(2, "0")}`;
+}
+
 
 function pauseTimer() {
     clearInterval(timer);
@@ -112,13 +120,39 @@ document.querySelector(".close").addEventListener("click", () => {
 });
 
 document.getElementById("saveScheduleBtn").addEventListener("click", () => {
-    const workTime = parseInt(document.getElementById("workTime").value);
-    const shortBreakTime = parseInt(document.getElementById("shortBreakTime").value);
-    const longBreakTime = parseInt(document.getElementById("longBreakTime").value);
+    const workTimeInput = document.getElementById("workTime").value;
+    const shortBreakTimeInput = document.getElementById("shortBreakTime").value;
+    const longBreakTimeInput = document.getElementById("longBreakTime").value;
+
+    const workTime = parseTime(workTimeInput);
+    const shortBreakTime = parseTime(shortBreakTimeInput);
+    const longBreakTime = parseTime(longBreakTimeInput);
+
+    if (workTime === null || shortBreakTime === null || longBreakTime === null) {
+        alert("Invalid time format. Please use the format 'mm:ss'.");
+        return;
+    }
+
     schedules.push({ workTime, shortBreakTime, longBreakTime });
     updateScheduleList();
     document.getElementById("newScheduleModal").style.display = "none";
 });
+
+function parseTime(timeString) {
+    const regex = /^(\d{1,2}):(\d{2})$/;
+    const match = regex.exec(timeString);
+    if (match === null) {
+        return null;
+    }
+    const minutes = parseInt(match[1]);
+    const seconds = parseInt(match[2]);
+    if (isNaN(minutes) || isNaN(seconds) || minutes < 0 || seconds < 0 || seconds >= 60) {
+        return null;
+    }
+    return minutes * 60 + seconds;
+}
+
+
 
 document.getElementById("startPauseBtn").addEventListener("click", () => {
     if (timerRunning) {
