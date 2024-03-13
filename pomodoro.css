@@ -1,17 +1,42 @@
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
+main {
+    font-family: 'Lucida Console', monospace;    
+    margin: 15% auto;
+    width: 40%;
+    padding: 10px;
     text-align: center;
+    border: 3px solid #000000;
+    border-radius: 12px;
 }
 
-h1 {
-    margin-top: 0;
+header, footer {
+    font-family: 'Lucida Console', monospace;    
+    margin: auto;
+    text-align: center;
+    padding: 10px
+}
+
+button {
+    margin: 20px;
+    font-family: 'Lucida Console', monospace;   
+    border-radius: 8px; 
+    padding: 5px 10px;
 }
 
 ul {
     list-style-type: none;
     padding: 0;
+}
+
+li {
+    padding: 10px;
+    background-color: #dcdcdc;
+    border-radius: 12px;
+    margin: 0px 10px 5px 10px;
+    
+}
+
+li:hover {
+    background-color: #bababa;
 }
 
 #newScheduleModal {
@@ -24,6 +49,14 @@ ul {
     height: 100%;
     overflow: auto;
     background-color: rgba(0, 0, 0, 0.4);
+}
+
+#timerDisplay{
+    font-size: 80px;
+}
+
+input {
+    margin: 10px;
 }
 
 .modal-content {

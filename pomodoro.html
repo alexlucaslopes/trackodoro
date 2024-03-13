@@ -3,37 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pomodoro Timer App</title>
+    <title>Trackodoro</title>
     <link rel="stylesheet" href="pomodoro.css">
 </head>
 <body>
-    <div id="selectionPage">
-        <h1>Select a Schedule</h1>
-        <ul id="scheduleList"></ul>
-        <button id="newScheduleBtn">New Schedule</button>
-    </div>
-    <div id="timerPage" style="display:none;">
-        <h1>Pomodoro Timer</h1>
-        <div id="timerDisplay">00:00</div>
-        <div id="controlButtons">
-            <button id="startBtn">Start</button>
-            <button id="pauseBtn">Pause</button>
-            <button id="quitBtn">Quit</button>
+    <header>
+        <h1>Trackodoro</h1>
+    </header>
+    <main>
+        <div id="selectionPage">
+            <h3>Subject List</h3>
+            <ul id="scheduleList"></ul>
+            <button id="newScheduleBtn">New Schedule</button>
         </div>
-    </div>
-    <div id="newScheduleModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>New Schedule</h2>
-            <label for="workTime">Work Time (minutes):</label>
-            <input type="number" id="workTime" min="1" required><br>
-            <label for="shortBreakTime">Short Break Time (minutes):</label>
-            <input type="number" id="shortBreakTime" min="1" required><br>
-            <label for="longBreakTime">Long Break Time (minutes):</label>
-            <input type="number" id="longBreakTime" min="1" required><br>
-            <button id="saveScheduleBtn">Save Schedule</button>
+        <div id="timerPage" style="display:none;">
+            <h3>Now Timing</h3>
+            <div id="timerDisplay">00:00</div>
+            <div id="controlButtons">
+                <button id="startBtn">Start</button>
+                <button id="pauseBtn">Pause</button>
+                <button id="quitBtn">Quit</button>
+            </div>
         </div>
-    </div>
-    <script src="pomodoro.js"></script>
+        <div id="newScheduleModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h3>New Subject</h3>
+                <label for="subjectName">Subject Name:</label>
+                <input type="text" id="subjectName" required><br>
+                <label for="workTime">Work Time (minutes):</label>
+                <input type="number" id="workTime" min="1" required><br>
+                <label for="shortBreakTime">Short Break Time (minutes):</label>
+                <input type="number" id="shortBreakTime" min="1" required><br>
+                <label for="longBreakTime">Long Break Time (minutes):</label>
+                <input type="number" id="longBreakTime" min="1" required><br>
+                <label for="subjectColor">Select a color:</label>
+                <input type="color" id="subjectColor" value="#000000"><br>
+                <button id="saveScheduleBtn">Save Schedule</button>
+            </div>
+        </div>
+        <script src="pomodoro.js"></script>
+    </main>
+    <footer>
+        <p>Created by Kyle Samonte, Alexandre Lopes, and Aidan Walker</p>
+    </footer>
 </body>
 </html>
