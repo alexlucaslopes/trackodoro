@@ -26,12 +26,16 @@
         <div class="modal-content">
             <span class="close">&times;</span>
             <h2>New Schedule</h2>
+            <label for="scheduleName">Schedule Name:</label>
+            <input type="text" id="scheduleName" required><br>
             <label for="workTime">Work Time:</label>
             <input type="text" id="workTime" placeholder="mm:ss" required><br>
             <label for="shortBreakTime">Short Break Time:</label>
             <input type="text" id="shortBreakTime" placeholder="mm:ss" required><br>
             <label for="longBreakTime">Long Break Time:</label>
             <input type="text" id="longBreakTime" placeholder="mm:ss" required><br>
+            <label for="subjectColor">Select a color:</label>
+            <input type="color" id="subjectColor" value="#000000"><br>
             <button id="saveScheduleBtn">Save Schedule</button>
         </div>
     </div>
