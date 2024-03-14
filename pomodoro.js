@@ -7,6 +7,8 @@ let timer;
 let remainingTime;
 let repetitions = 0;
 let timerRunning = false;
+let trackodoros = [];
+
 
 function displaySelectionPage() {
     document.getElementById("selectionPage").style.display = "block";
@@ -29,7 +31,7 @@ function updateScheduleList() {
         input.id = `schedule${index}`;
         const label = document.createElement("label");
         label.htmlFor = `schedule${index}`;
-        label.textContent = `${schedule.name}: ${formatTime(schedule.workTime)} work, ${formatTime(schedule.shortBreakTime)} short break, ${formatTime(schedule.longBreakTime)} long break`;
+        label.textContent = `${schedule.name}: ${formatTime(schedule.workTime)} work, ${formatTime(schedule.shortBreakTime)} short break, ${formatTime(schedule.longBreakTime)} long break, High Score: ${trackodoros[index]}`;
         label.style.backgroundColor = schedule.color;
         scheduleForm.appendChild(input);
         scheduleForm.appendChild(label);
@@ -65,17 +67,30 @@ function selectSchedule(index) {
 
 function startTimer() {
     const schedule = schedules[currentScheduleIndex];
+
     let currentTime = remainingTime || schedule.workTime;
     timerRunning = true;
+    const high = document.getElementById("high");
+    if (trackodoros[currentScheduleIndex] == null)
+    {
+        trackodoros[currentScheduleIndex] = 0;
+    }
+    const current = document.getElementById("current");
     timer = setInterval(() => {
         if (currentTime <= 0) {
             clearInterval(timer);
-            if (repetitions % 4 === 0) {
+            if (repetitions % 4 === 0 && repetitions != 0) {
                 currentTime = schedule.longBreakTime;
             } else {
                 currentTime = schedule.shortBreakTime;
             }
             repetitions++;
+            current.textContent = `You've completed ${repetitions} cycles!`;
+            if (repetitions > trackodoros[currentScheduleIndex])
+            {
+                trackodoros[currentScheduleIndex] = repetitions;
+            }
+            high.textContent = `You're high score is ${trackodoros[currentScheduleIndex]} cycles`;
             document.getElementById("timerDisplay").textContent = formatTime(currentTime);
             timer = setInterval(() => {
                 if (currentTime <= 0) {
@@ -176,6 +191,7 @@ document.getElementById("quitBtn").addEventListener("click", () => {
         timerRunning = false;
         document.querySelector('input[name="schedule"]:checked').checked = false; // Deselect radio button
         displaySelectionPage();
+        updateScheduleList();
     }
 });
 
