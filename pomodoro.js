@@ -1,6 +1,6 @@
 let schedules = [
-    { workTime: 60, shortBreakTime: 60, longBreakTime: 60 },
-    { workTime: 20, shortBreakTime: 20, longBreakTime: 20 }
+    { name: "Minute Cycles", color: "#FFFFFF", workTime: 60, shortBreakTime: 60, longBreakTime: 60 },
+    { name: "Demo Cycles", color: "#FFFFFF", workTime: 20, shortBreakTime: 20, longBreakTime: 20 }
 ];
 let currentScheduleIndex = -1;
 let timer;
@@ -29,7 +29,8 @@ function updateScheduleList() {
         input.id = `schedule${index}`;
         const label = document.createElement("label");
         label.htmlFor = `schedule${index}`;
-        label.textContent = `Schedule ${index + 1}: ${formatTime(schedule.workTime)} work, ${formatTime(schedule.shortBreakTime)} short break, ${formatTime(schedule.longBreakTime)} long break`;
+        label.textContent = `${schedule.name}: ${formatTime(schedule.workTime)} work, ${formatTime(schedule.shortBreakTime)} short break, ${formatTime(schedule.longBreakTime)} long break`;
+        label.style.backgroundColor = schedule.color;
         scheduleForm.appendChild(input);
         scheduleForm.appendChild(label);
         scheduleForm.appendChild(document.createElement("br"));
@@ -120,9 +121,11 @@ document.querySelector(".close").addEventListener("click", () => {
 });
 
 document.getElementById("saveScheduleBtn").addEventListener("click", () => {
+    const scheduleName = document.getElementById("scheduleName").value;
     const workTimeInput = document.getElementById("workTime").value;
     const shortBreakTimeInput = document.getElementById("shortBreakTime").value;
     const longBreakTimeInput = document.getElementById("longBreakTime").value;
+    const subjectColor = document.getElementById("subjectColor").value;
 
     const workTime = parseTime(workTimeInput);
     const shortBreakTime = parseTime(shortBreakTimeInput);
@@ -133,7 +136,7 @@ document.getElementById("saveScheduleBtn").addEventListener("click", () => {
         return;
     }
 
-    schedules.push({ workTime, shortBreakTime, longBreakTime });
+    schedules.push({ name: scheduleName, workTime, shortBreakTime, longBreakTime, color: subjectColor });
     updateScheduleList();
     document.getElementById("newScheduleModal").style.display = "none";
 });
@@ -151,7 +154,6 @@ function parseTime(timeString) {
     }
     return minutes * 60 + seconds;
 }
-
 
 
 document.getElementById("startPauseBtn").addEventListener("click", () => {
