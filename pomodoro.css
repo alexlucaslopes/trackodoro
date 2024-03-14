@@ -1,11 +1,16 @@
 main {
     font-family: 'Lucida Console', monospace;    
     margin: 15% auto;
-    width: 40%;
+    width: 70%;
     padding: 10px;
     text-align: center;
-    border: 3px solid #000000;
+    border: 3px solid #A4133C;
     border-radius: 12px;
+    background-color: #FFB3C1;
+}
+
+body{
+    background-color: #FFB3C1;
 }
 
 header, footer {
@@ -15,11 +20,22 @@ header, footer {
     padding: 10px
 }
 
+header {
+    background-color: #A4133C;
+    color: #FFB3C1;
+}
+
+footer{
+    color: #A4133C;
+}
+
 button {
     margin: 20px;
     font-family: 'Lucida Console', monospace;   
     border-radius: 8px; 
     padding: 5px 10px;
+    color: #FFCCD5;
+    background-color: #A4133C;
 }
 
 ul {
@@ -27,16 +43,13 @@ ul {
     padding: 0;
 }
 
-li {
-    padding: 10px;
-    background-color: #dcdcdc;
+form label {
+    padding: 5px 10px;
     border-radius: 12px;
-    margin: 0px 10px 5px 10px;
-    
 }
 
-li:hover {
-    background-color: #bababa;
+form label:active {
+    background-color: #A4133C;
 }
 
 #newScheduleModal {
@@ -53,6 +66,7 @@ li:hover {
 
 #timerDisplay{
     font-size: 80px;
+    color:#A4133C;
 }
 
 input {
@@ -60,11 +74,11 @@ input {
 }
 
 .modal-content {
-    background-color: #fefefe;
+    background-color: #FFCCD5;
     margin: 15% auto;
     padding: 20px;
-    border: 1px solid #888;
     width: 50%;
+    border-radius: 8px; 
 }
 
 .close {

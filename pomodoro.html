@@ -8,35 +8,39 @@
 </head>
 <body>
     <header>
-        <h1>Trackodoro</h1>
+        <h1 style="font-size: 50px;">Trackodoro</h1>
     </header>
     <main>
         <div id="selectionPage">
-            <h3>Subject List</h3>
-            <ul id="scheduleList"></ul>
+            <h3>Select a Schedule</h3>
+            <form id="scheduleForm"></form>
             <button id="newScheduleBtn">New Schedule</button>
+            <button id="startTimerBtn">Start Timer</button>
         </div>
         <div id="timerPage" style="display:none;">
-            <h3>Now Timing</h3>
+            <h1>Timer</h1>
+            <p>Try to reach the highest score possible!</p>
+            <h5 id="high"></h5>
+            <h5 id="current"></h5>
             <div id="timerDisplay">00:00</div>
+            <div id="counterDisplay"></div>
             <div id="controlButtons">
-                <button id="startBtn">Start</button>
-                <button id="pauseBtn">Pause</button>
+                <button id="startPauseBtn">Pause</button>
                 <button id="quitBtn">Quit</button>
             </div>
         </div>
         <div id="newScheduleModal" class="modal">
             <div class="modal-content">
                 <span class="close">&times;</span>
-                <h3>New Subject</h3>
-                <label for="subjectName">Subject Name:</label>
-                <input type="text" id="subjectName" required><br>
-                <label for="workTime">Work Time (minutes):</label>
-                <input type="number" id="workTime" min="1" required><br>
-                <label for="shortBreakTime">Short Break Time (minutes):</label>
-                <input type="number" id="shortBreakTime" min="1" required><br>
-                <label for="longBreakTime">Long Break Time (minutes):</label>
-                <input type="number" id="longBreakTime" min="1" required><br>
+                <h2>New Schedule</h2>
+                <label for="scheduleName">Schedule Name:</label>
+                <input type="text" id="scheduleName" required><br>
+                <label for="workTime">Work Time:</label>
+                <input type="text" id="workTime" placeholder="mm:ss" required><br>
+                <label for="shortBreakTime">Short Break Time:</label>
+                <input type="text" id="shortBreakTime" placeholder="mm:ss" required><br>
+                <label for="longBreakTime">Long Break Time:</label>
+                <input type="text" id="longBreakTime" placeholder="mm:ss" required><br>
                 <label for="subjectColor">Select a color:</label>
                 <input type="color" id="subjectColor" value="#000000"><br>
                 <button id="saveScheduleBtn">Save Schedule</button>
@@ -45,7 +49,7 @@
         <script src="pomodoro.js"></script>
     </main>
     <footer>
-        <p>Created by Kyle Samonte, Alexandre Lopes, and Aidan Walker</p>
+        <p>Created by Kyle Samonte, Aidan Walker, and Alexandre Lopes</p>
     </footer>
 </body>
 </html>
