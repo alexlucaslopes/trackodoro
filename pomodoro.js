@@ -1,7 +1,4 @@
-let schedules = [
-    { name: "Minute Cycles", color: "#FFFFFF", workTime: 60, shortBreakTime: 60, longBreakTime: 60 },
-    { name: "Demo Cycles", color: "#FFFFFF", workTime: 20, shortBreakTime: 20, longBreakTime: 20 }
-];
+let schedules = [];
 let currentScheduleIndex = -1;
 let timer;
 let remainingTime;
@@ -9,6 +6,41 @@ let repetitions = 0;
 let timerRunning = false;
 let trackodoros = [];
 
+// Load schedules from JSON file
+function loadSchedules() {
+    fetch('schedules.json')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to load schedules');
+            }
+            return response.json();
+        })
+        .then(data => {
+            schedules = data;
+            updateScheduleList();
+        })
+        .catch(error => {
+            console.error('Error loading schedules:', error);
+        });
+}
+
+
+
+// Update the JSON file with the schedules array
+function updateJSONFile() {
+    fetch('schedules.json', {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(schedules)
+    }).catch(error => {
+        console.error('Error updating JSON file:', error);
+    });
+}
+
+// Call loadSchedules on page load
+window.addEventListener('load', loadSchedules);
 
 function displaySelectionPage() {
     document.getElementById("selectionPage").style.display = "block";
@@ -31,7 +63,7 @@ function updateScheduleList() {
         input.id = `schedule${index}`;
         const label = document.createElement("label");
         label.htmlFor = `schedule${index}`;
-        label.textContent = `${schedule.name}: ${formatTime(schedule.workTime)} work, ${formatTime(schedule.shortBreakTime)} short break, ${formatTime(schedule.longBreakTime)} long break, High Score: ${trackodoros[index]}`;
+        label.textContent = `${schedule.name}: ${formatTime(schedule.workTime)} work, ${formatTime(schedule.shortBreakTime)} short break, ${formatTime(schedule.longBreakTime)} long break, High Score: ${schedule.trackodoros}`;
         label.style.backgroundColor = schedule.color;
         scheduleForm.appendChild(input);
         scheduleForm.appendChild(label);
@@ -71,9 +103,8 @@ function startTimer() {
     let currentTime = remainingTime || schedule.workTime;
     timerRunning = true;
     const high = document.getElementById("high");
-    if (trackodoros[currentScheduleIndex] == null)
-    {
-        trackodoros[currentScheduleIndex] = 0;
+    if (schedule.trackodoros == null) {
+        schedule.trackodoros = 0;
     }
     const current = document.getElementById("current");
     timer = setInterval(() => {
@@ -86,11 +117,10 @@ function startTimer() {
             }
             repetitions++;
             current.textContent = `You've completed ${repetitions} cycles!`;
-            if (repetitions > trackodoros[currentScheduleIndex])
-            {
-                trackodoros[currentScheduleIndex] = repetitions;
+            if (repetitions > schedule.trackodoros) {
+                schedule.trackodoros = repetitions;
             }
-            high.textContent = `You're high score is ${trackodoros[currentScheduleIndex]} cycles`;
+            high.textContent = `You're high score is ${schedule.trackodoros} cycles`;
             document.getElementById("timerDisplay").textContent = formatTime(currentTime);
             timer = setInterval(() => {
                 if (currentTime <= 0) {
@@ -135,25 +165,26 @@ document.querySelector(".close").addEventListener("click", () => {
     document.getElementById("newScheduleModal").style.display = "none";
 });
 
-document.getElementById("saveScheduleBtn").addEventListener("click", () => {
-    const scheduleName = document.getElementById("scheduleName").value;
-    const workTimeInput = document.getElementById("workTime").value;
-    const shortBreakTimeInput = document.getElementById("shortBreakTime").value;
-    const longBreakTimeInput = document.getElementById("longBreakTime").value;
-    const subjectColor = document.getElementById("subjectColor").value;
+document.getElementById('saveScheduleBtn').addEventListener('click', () => {
+    const scheduleName = document.getElementById('scheduleName').value;
+    const workTimeInput = document.getElementById('workTime').value;
+    const shortBreakTimeInput = document.getElementById('shortBreakTime').value;
+    const longBreakTimeInput = document.getElementById('longBreakTime').value;
+    const subjectColor = document.getElementById('subjectColor').value;
 
     const workTime = parseTime(workTimeInput);
     const shortBreakTime = parseTime(shortBreakTimeInput);
     const longBreakTime = parseTime(longBreakTimeInput);
 
     if (workTime === null || shortBreakTime === null || longBreakTime === null) {
-        alert("Invalid time format. Please use the format 'mm:ss'.");
+        alert('Invalid time format. Please use the format "mm:ss".');
         return;
     }
 
-    schedules.push({ name: scheduleName, workTime, shortBreakTime, longBreakTime, color: subjectColor });
-    updateScheduleList();
-    document.getElementById("newScheduleModal").style.display = "none";
+    schedules.push({ name: scheduleName, workTime, shortBreakTime, longBreakTime, color: subjectColor, trackodoros: 0 });
+    updateJSONFile(); // Update JSON file
+    updateScheduleList(); // Update schedule list
+    document.getElementById('newScheduleModal').style.display = 'none';
 });
 
 function parseTime(timeString) {
