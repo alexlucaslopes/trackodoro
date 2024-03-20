@@ -1,0 +1,18 @@
+[
+  {
+    "name": "Study Schedule",
+    "color": "#FFA500",
+    "workTime": 1500,
+    "shortBreakTime": 300,
+    "longBreakTime": 900,
+    "trackodoros": 4
+  },
+  {
+    "name": "Exercise Schedule",
+    "color": "#00FF00",
+    "workTime": 1200,
+    "shortBreakTime": 180,
+    "longBreakTime": 600,
+    "trackodoros": 2
+  }
+]
