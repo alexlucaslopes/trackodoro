@@ -1,14 +1,9 @@
-let schedules = [
-    { name: "Minute Cycles", color: "#FFFFFF", workTime: 60, shortBreakTime: 60, longBreakTime: 60 },
-    { name: "Demo Cycles", color: "#FFFFFF", workTime: 20, shortBreakTime: 20, longBreakTime: 20 }
-];
+let schedules = [];
 let currentScheduleIndex = -1;
 let timer;
 let remainingTime;
 let repetitions = 0;
 let timerRunning = false;
-let trackodoros = [];
-
 
 function displaySelectionPage() {
     document.getElementById("selectionPage").style.display = "block";
@@ -21,27 +16,42 @@ function displayTimerPage() {
 }
 
 function updateScheduleList() {
-    const scheduleForm = document.getElementById("scheduleForm");
-    scheduleForm.innerHTML = "";
-    schedules.forEach((schedule, index) => {
-        const input = document.createElement("input");
-        input.type = "radio";
-        input.name = "schedule";
-        input.value = index;
-        input.id = `schedule${index}`;
-        const label = document.createElement("label");
-        label.htmlFor = `schedule${index}`;
-        label.textContent = `${schedule.name}: ${formatTime(schedule.workTime)} work, ${formatTime(schedule.shortBreakTime)} short break, ${formatTime(schedule.longBreakTime)} long break, High Score: ${trackodoros[index]}`;
-        label.style.backgroundColor = schedule.color;
-        scheduleForm.appendChild(input);
-        scheduleForm.appendChild(label);
-        scheduleForm.appendChild(document.createElement("br"));
-    });
-    scheduleForm.addEventListener("change", handleScheduleChange);
+    fetch('pomodoro.php')
+        .then(response => response.json())
+        .then(data => {
+            schedules = data;
+            const scheduleForm = document.getElementById("scheduleForm");
+            scheduleForm.innerHTML = "";
+            schedules.forEach((schedule, index) => {
+                const input = document.createElement("input");
+                input.type = "radio";
+                input.name = "schedule";
+                input.value = index;
+                input.id = `schedule${index}`;
+                const label = document.createElement("label");
+                label.htmlFor = `schedule${index}`;
+                label.textContent = `${schedule.name}: ${formatTime(schedule.worktime)} work, ${formatTime(schedule.shorttime)} short break, ${formatTime(schedule.longtime)} long break, High Score: ${schedule.trackodoros}`;
+                label.style.backgroundColor = schedule.color;
+                scheduleForm.appendChild(input);
+                scheduleForm.appendChild(label);
+                scheduleForm.appendChild(document.createElement("br"));
+            });
+        })
+        .catch(error => console.error('Error:', error));
+}
+
+function formatTime(seconds) {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${String(minutes).padStart(2, "0")}:${String(remainingSeconds).padStart(2, "0")}`;
 }
 
 
+
 window.addEventListener("load", updateScheduleList);
+
+scheduleForm.addEventListener("change", handleScheduleChange);
+
 function handleScheduleChange() {
     const selectedScheduleIndex = parseInt(document.querySelector('input[name="schedule"]:checked').value);
     if (!isNaN(selectedScheduleIndex)) {
@@ -49,6 +59,7 @@ function handleScheduleChange() {
         document.getElementById("startTimerBtn").disabled = false;
     }
 }
+
 
 document.getElementById("startTimerBtn").addEventListener("click", () => {
     if (currentScheduleIndex !== -1) {
@@ -59,61 +70,68 @@ document.getElementById("startTimerBtn").addEventListener("click", () => {
     }
 });
 
-function selectSchedule(index) {
-    currentScheduleIndex = index;
-    const selectedSchedule = schedules[currentScheduleIndex];
-    document.getElementById("selectedScheduleDisplay").textContent = `Selected Schedule: ${selectedSchedule.workTime}m work, ${selectedSchedule.shortBreakTime}m short break, ${selectedSchedule.longBreakTime}m long break`;
-}
-
 function startTimer() {
     const schedule = schedules[currentScheduleIndex];
 
-    let currentTime = remainingTime || schedule.workTime;
+    let currentTime = remainingTime || schedule.worktime;
     timerRunning = true;
     const high = document.getElementById("high");
-    if (trackodoros[currentScheduleIndex] == null)
-    {
-        trackodoros[currentScheduleIndex] = 0;
+    if (schedule.trackodoros == null) {
+        schedule.trackodoros = 0;
     }
     const current = document.getElementById("current");
+    const displayTimer = document.getElementById("timerDisplay");
+
+    function updateDisplay() {
+        displayTimer.textContent = formatTime(currentTime);
+    }
+
+    console.log("Start timer with currentTime:", currentTime);
+
+    updateDisplay();
+
     timer = setInterval(() => {
+        console.log("Interval tick - currentTime:", currentTime);
         if (currentTime <= 0) {
             clearInterval(timer);
+            console.log("Interval cleared - repetitions:", repetitions);
             if (repetitions % 4 === 0 && repetitions != 0) {
-                currentTime = schedule.longBreakTime;
+                currentTime = schedule.longtime;
             } else {
-                currentTime = schedule.shortBreakTime;
+                currentTime = schedule.shorttime;
             }
             repetitions++;
             current.textContent = `You've completed ${repetitions} cycles!`;
-            if (repetitions > trackodoros[currentScheduleIndex])
-            {
-                trackodoros[currentScheduleIndex] = repetitions;
+            if (repetitions > schedule.trackodoros) {
+                schedule.trackodoros = repetitions;
             }
-            high.textContent = `You're high score is ${trackodoros[currentScheduleIndex]} cycles`;
-            document.getElementById("timerDisplay").textContent = formatTime(currentTime);
+            high.textContent = `Your high score is ${schedule.trackodoros} cycles`;
+            updateDisplay();
+            console.log("Restart timer with new currentTime:", currentTime);
             timer = setInterval(() => {
                 if (currentTime <= 0) {
                     clearInterval(timer);
+                    console.log("Restart interval cleared");
                     startTimer();
                 } else {
                     currentTime--;
-                    document.getElementById("timerDisplay").textContent = formatTime(currentTime);
+                    updateDisplay();
+                    console.log("Interval tick - currentTime:", currentTime);
                 }
             }, 1000);
         } else {
             currentTime--;
-            remainingTime = currentTime;
-            document.getElementById("timerDisplay").textContent = formatTime(currentTime);
+            updateDisplay();
+            console.log("Interval tick - currentTime:", currentTime);
         }
     }, 1000);
 }
 
-function formatTime(seconds) {
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    return `${minutes.toString().padStart(2, "0")}:${remainingSeconds.toString().padStart(2, "0")}`;
-}
+
+
+
+
+
 
 
 function pauseTimer() {
@@ -121,11 +139,55 @@ function pauseTimer() {
     timerRunning = false;
 }
 
-function formatTime(seconds) {
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    return `${minutes.toString().padStart(2, "0")}:${remainingSeconds.toString().padStart(2, "0")}`;
-}
+document.getElementById("startPauseBtn").addEventListener("click", () => {
+    if (timerRunning) {
+        pauseTimer();
+        document.getElementById("startPauseBtn").textContent = "Resume";
+    } else {
+        startTimer();
+        document.getElementById("startPauseBtn").textContent = "Pause";
+    }
+});
+
+document.getElementById("quitBtn").addEventListener("click", () => {
+    if (confirm("Are you sure you want to quit?")) {
+        clearInterval(timer);
+        remainingTime = null;
+        const selectedSchedule = schedules[currentScheduleIndex];
+        if (repetitions > selectedSchedule.trackodoros) {
+            selectedSchedule.trackodoros = repetitions;
+            fetch('pomodoro.php', {
+                method: 'POST',
+                body: JSON.stringify(schedules),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    console.log(data);
+                    alert('High score saved successfully!');
+                    updateScheduleList(); // Update schedule list after saving
+                    currentScheduleIndex = -1; // Reset current schedule index
+                    timerRunning = false; // Reset timer running flag
+                    displaySelectionPage(); // Display the selection page
+                })
+                .catch(error => {
+                    console.error('There was a problem with your fetch operation:', error);
+                });
+        } else {
+            currentScheduleIndex = -1; // Reset current schedule index
+            timerRunning = false; // Reset timer running flag
+            displaySelectionPage(); // Display the selection page
+        }
+    }
+});
+
 
 document.getElementById("newScheduleBtn").addEventListener("click", () => {
     document.getElementById("newScheduleModal").style.display = "block";
@@ -151,36 +213,35 @@ document.getElementById("saveScheduleBtn").addEventListener("click", () => {
         return;
     }
 
-    schedules.push({ name: scheduleName, workTime, shortBreakTime, longBreakTime, color: subjectColor });
-    updateScheduleList();
-    document.getElementById("newScheduleModal").style.display = "none";
-
     const formData = new FormData();
     formData.append('name', scheduleName);
     formData.append('worktime', workTime);
     formData.append('shorttime', shortBreakTime);
     formData.append('longtime', longBreakTime);
     formData.append('color', subjectColor);
+    formData.append('trackodoros', 0);
 
     fetch('pomodoro.php', {
         method: 'POST',
         body: formData
     })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return console.log("It went through!");
-    })
-    .then(data => {
-        console.log(data); 
-        alert('Data saved successfully!');
-    })
-    .catch(error => {
-        console.error('There was a problem with your fetch operation:', error);
-    });
-    
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.text();
+        })
+        .then(data => {
+            console.log(data);
+            alert('Data saved successfully!');
+            updateScheduleList(); // Update schedule list after saving
+            document.getElementById("newScheduleModal").style.display = "none"; // Close the modal after saving
+        })
+        .catch(error => {
+            console.error('There was a problem with your fetch operation:', error);
+        });
 });
+
 
 function parseTime(timeString) {
     const regex = /^(\d{1,2}):(\d{2})$/;
@@ -196,30 +257,6 @@ function parseTime(timeString) {
     return minutes * 60 + seconds;
 }
 
-
-document.getElementById("startPauseBtn").addEventListener("click", () => {
-    if (timerRunning) {
-        pauseTimer();
-        document.getElementById("startPauseBtn").textContent = "Resume";
-    } else {
-        startTimer();
-        document.getElementById("startPauseBtn").textContent = "Pause";
-    }
-});
-
-
-document.getElementById("quitBtn").addEventListener("click", () => {
-    if (confirm("Are you sure you want to quit?")) {
-        clearInterval(timer);
-        remainingTime = null;
-        repetitions = 0;
-        currentScheduleIndex = -1;
-        timerRunning = false;
-        document.querySelector('input[name="schedule"]:checked').checked = false; // Deselect radio button
-        displaySelectionPage();
-        updateScheduleList();
-    }
-});
-
+document.getElementById("subjectColor").value = "#D297ED";
 
 displaySelectionPage();
