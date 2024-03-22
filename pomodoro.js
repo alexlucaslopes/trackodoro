@@ -154,6 +154,32 @@ document.getElementById("saveScheduleBtn").addEventListener("click", () => {
     schedules.push({ name: scheduleName, workTime, shortBreakTime, longBreakTime, color: subjectColor });
     updateScheduleList();
     document.getElementById("newScheduleModal").style.display = "none";
+
+    const formData = new FormData();
+    formData.append('name', scheduleName);
+    formData.append('worktime', workTime);
+    formData.append('shorttime', shortBreakTime);
+    formData.append('longtime', longBreakTime);
+    formData.append('color', subjectColor);
+
+    fetch('pomodoro.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return console.log("It went through!");
+    })
+    .then(data => {
+        console.log(data); 
+        alert('Data saved successfully!');
+    })
+    .catch(error => {
+        console.error('There was a problem with your fetch operation:', error);
+    });
+    
 });
 
 function parseTime(timeString) {
