@@ -1,31 +1,42 @@
 <?php
 
-$pomoJSON = 'pomoodoro.json';
+$pomoJSON = 'pomodoro.json';
 
-$name = $_POST['name'];
-$work_time = $_POST['worktime'];
-$short_time = $_POST['shorttime'];
-$long_time = $_POST['longtime'];
-$color = $_POST['color'];
+if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    // Handle GET request for loading schedules
+    $pomoData = file_get_contents($pomoJSON);
+    echo $pomoData;
+} elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Handle POST request for creating and saving schedules
+    $name = $_POST['name'];
+    $work_time = $_POST['worktime'];
+    $short_time = $_POST['shorttime'];
+    $long_time = $_POST['longtime'];
+    $color = $_POST['color'];
+    $trackodoroNum = $_POST['trackodoros'];
 
-// Create an array with the received data
+    // Create an array with the received data
 $newData = array(
     'name' => $name,
-    'worktime' => $work_time,
-    'shortime' => $short_time,
-    'longtime' => $long_time,
-    'color' => $color
+    'worktime' => intval($work_time),
+    'shorttime' => intval($short_time),
+    'longtime' => intval($long_time),
+    'color' => $color,
+    'trackodoros' => $trackodoroNum // Initialize trackodoros to 0 for new schedules
 );
 
-$pomoData = file_get_contents($pomoJSON);
 
-$data = json_decode($pomoData, true);
+    $pomoData = file_get_contents($pomoJSON);
 
-$data[] = $newData;
+    $data = json_decode($pomoData, true);
 
-$pomoData = json_encode($data, JSON_PRETTY_PRINT);
+    $data[] = $newData;
 
-file_put_contents($pomoJSON, $pomoData);
+    $pomoData = json_encode($data, JSON_PRETTY_PRINT);
 
-echo 'Data saved successfully!';
+    file_put_contents($pomoJSON, $pomoData);
+
+    echo 'Data saved successfully!';
+}
+
 ?>
