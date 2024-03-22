@@ -1,3 +1,4 @@
+
 let schedules = [];
 let currentScheduleIndex = -1;
 let timer;
@@ -153,9 +154,8 @@ document.getElementById("quitBtn").addEventListener("click", () => {
     if (confirm("Are you sure you want to quit?")) {
         clearInterval(timer);
         remainingTime = null;
-        const selectedSchedule = schedules[currentScheduleIndex];
-        if (repetitions > selectedSchedule.trackodoros) {
-            selectedSchedule.trackodoros = repetitions;
+        if (repetitions > schedules[currentScheduleIndex].trackodoros) {
+            schedules[currentScheduleIndex].trackodoros = repetitions;
             fetch('pomodoro.php', {
                 method: 'POST',
                 body: JSON.stringify(schedules),
