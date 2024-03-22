@@ -1,3 +1,18 @@
 [
-    
+  {
+    "name": "test",
+    "worktime": "1",
+    "shorttime": "1",
+    "longtime": "1",
+    "color": "#d79393",
+    "trackodoros":  "0"
+  },
+  {
+    "name": "test",
+    "worktime": "60",
+    "shorttime": "60",
+    "longtime": "60",
+    "color": "#d79393",
+    "trackodoros": "0"
+  }
 ]
